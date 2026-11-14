@@ -156,7 +156,7 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 .sl .ow{display:block;font-size:12px;color:var(--muted)}
 
 /* 지도 */
-.map{position:relative;height:calc(100svh - 150px);min-height:360px;overflow:hidden;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
+.map{position:relative;height:calc(100svh - 245px);min-height:360px;overflow:hidden;border-radius:12px;background:var(--surface-2);border:1px solid var(--line);touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab}
 .map.drag{cursor:grabbing}
 .map img{position:absolute;left:0;top:0;transform-origin:0 0;max-width:none;-webkit-user-drag:none;will-change:transform;visibility:hidden}
 .map.ready img{visibility:visible}
@@ -165,6 +165,12 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 .map-hint{position:absolute;left:50%;top:10px;transform:translateX(-50%);background:rgba(27,27,27,.75);color:#FFFAEC;font-size:12.5px;padding:5px 11px;border-radius:999px;white-space:nowrap;pointer-events:none;transition:opacity .4s}
 .map-hint.off{opacity:0}
 .map-err{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;color:var(--muted);font-size:14px}
+.map-legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;margin:10px 2px 0;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);font-size:13px;color:var(--ink)}
+.map-legend .dots{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
+.map-legend .lg{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.map-legend .dot{width:11px;height:11px;border-radius:50%;flex:none;box-shadow:inset 0 0 0 1px rgba(0,0,0,.18)}
+.map-legend .emo{font-size:13px;line-height:1}
+.map-legend .cap{color:var(--muted)}
 .map-sub{margin:10px 2px 0;font-size:13px;color:var(--muted)}
 .map-sub a{color:var(--accent)}
 </style>
@@ -199,6 +205,16 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
   /* 데이터 파일 이름과 지도 이미지 이름 (같은 저장소에 함께 올려 주세요) */
   var DATA_FILE = "admin_schedule.xlsx";
   var MAP_SRC = "김장대첩지도.png", MAP_ALT = "김장대첩지도.PNG";
+  /* 지도 범례: 같은 색 = 같은 리워드를 주는 미션. t 에 리워드 이름을 적으면 동그라미 옆에 표시됩니다 */
+  var MAP_LEGEND = [
+    { c: "#2F6FE4", n: "파란색", t: "" },
+    { c: "#E23B3B", n: "빨간색", t: "" },
+    { c: "#F28C28", n: "주황색", t: "" },
+    { c: "#8E4EC6", n: "보라색", t: "" },
+    { c: "#F2C81E", n: "노란색", t: "" }
+  ];
+  var MAP_LEGEND_SPECIAL = "특별 리워드"; /* 배추 이모티콘 옆 글자 */
+  var MAP_LEGEND_CAP ="같은 색 미션은 같은 리워드를 드려요";
 
   var $ = function (id) { return document.getElementById(id); };
   var D = { info: {}, infoOrder: [], items: [], staff: [], sups: [], notes: [] };
@@ -411,6 +427,9 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
     return '<div class="map" id="map"><img id="mapimg" src="' + src + '?v=1" alt="김장대첩 행사장 지도" draggable="false">' +
       '<div class="map-hint" id="maphint">두 손가락으로 확대 · 끌어서 이동</div>' +
       '<div class="map-ctl"><button type="button" data-z="in" aria-label="확대">+</button><button type="button" data-z="out" aria-label="축소">−</button><button type="button" data-z="fit" aria-label="전체 보기">⤢</button></div></div>' +
+      '<div class="map-legend" role="group" aria-label="지도 범례"><span class="dots">' + MAP_LEGEND.map(function (l) {
+        return '<span class="lg" title="' + esc(l.n) + '"><i class="dot" style="background:' + l.c + '" role="img" aria-label="' + esc(l.n) + '"></i>' + (l.t ? esc(l.t) : "") + "</span>";
+      }).join("") + '<span class="lg"><span class="emo" role="img" aria-label="배추">🥬</span>' + esc(MAP_LEGEND_SPECIAL) + '</span></span><span class="cap">' + esc(MAP_LEGEND_CAP) + "</span></div>" +
       '<p class="map-sub">잘 안 보이면 <a href="' + src + '" target="_blank" rel="noopener">지도 원본 이미지 열기</a></p>';
   }
   function setupMap() {
