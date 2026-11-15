@@ -6,6 +6,14 @@
 <meta name="robots" content="noindex,nofollow">
 <title>김장대첩 운영진 보드</title>
 <meta name="theme-color" content="#1B1B1B">
+<!-- 홈 화면에 추가했을 때 앱처럼 열리도록 하는 설정 (아이콘·manifest 파일을 같은 저장소에 함께 올려 주세요) -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="김장대첩">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
@@ -188,6 +196,32 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
 .map-legend .cap{color:var(--ink)}
 .map-sub{margin:10px 2px 0;font-size:13px;color:var(--muted)}
 .map-sub a{color:var(--accent)}
+
+/* 홈 화면에 앱으로 추가하기 공지 */
+.appnote{background:var(--pin);border-radius:12px;padding:12px 14px;margin-top:14px}
+.appnote>summary{list-style:none;cursor:pointer;display:flex;gap:6px;align-items:baseline;flex-wrap:wrap;font-weight:700;font-size:15.5px}
+.appnote>summary::-webkit-details-marker{display:none}
+.appnote>summary .fold{margin-left:auto;font:500 12.5px var(--body);color:var(--muted)}
+.appnote[open]>summary .fold::after{content:"접기 ▲"}
+.appnote:not([open])>summary .fold::after{content:"펼치기 ▼"}
+.appnote .why{margin:4px 0 10px;font-size:14px;word-break:keep-all}
+.os{display:flex;gap:4px;background:var(--surface-2);border-radius:10px;padding:3px;margin-bottom:10px}
+.os button{flex:1;border:0;background:none;border-radius:8px;padding:8px 4px;font:700 14px var(--body);color:var(--muted);cursor:pointer}
+.os button[aria-pressed=true]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.steps{margin:0;padding:0;list-style:none;counter-reset:s;display:grid;gap:8px}
+.steps>li{counter-increment:s;display:grid;grid-template-columns:24px 1fr;gap:8px;font-size:14px;word-break:keep-all;overflow-wrap:anywhere}
+.steps>li::before{content:counter(s);width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font:700 12px/22px var(--body);text-align:center;margin-top:1px}
+.steps>li.pre::before{content:"!";background:var(--ink);color:var(--bg)}
+.steps b{font-weight:700}
+.steps .sub{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
+.key{display:inline-block;min-width:1.6em;text-align:center;border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:0 5px;font:600 13px/1.5 var(--body);white-space:nowrap}
+.br2{display:grid;gap:6px;margin-top:6px}
+.br2>div{background:var(--surface);border-radius:9px;padding:8px 10px}
+.br2 .lb{display:block;font-weight:700;font-size:13px;margin-bottom:2px}
+.steps>li.pre{counter-increment:none}
+.ext{display:flex;width:max-content;align-items:center;gap:6px;margin-top:6px;border:0;background:var(--ink);color:var(--bg);border-radius:9px;padding:8px 12px;font:700 13.5px var(--body);cursor:pointer}
+.appnote .done{margin:10px 0 0;font-size:13px;color:var(--muted)}
+.applive{margin-top:14px;padding:9px 12px;border-radius:10px;background:var(--ok-soft);color:var(--ok);font-size:13px;font-weight:500}
 </style>
 </head>
 <body>
@@ -347,9 +381,46 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
     }).join("");
   }
 
+  /* ── 홈 화면에 앱으로 추가하기 안내 (엑셀이 아니라 여기 글자를 고치면 바뀝니다) ── */
+  var UA = navigator.userAgent || "";
+  var IS_IOS = /iPhone|iPad|iPod/i.test(UA) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  var IS_ANDROID = /Android/i.test(UA);
+  var IN_KAKAO = /KAKAOTALK/i.test(UA);
+  var AS_APP = (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
+  var appOs = IS_ANDROID ? "galaxy" : "iphone";
+  var appOpen = true;
+  try { appOpen = localStorage.getItem("kj-appnote-closed") !== "1"; } catch (e) {}
+
+  function appNoteHtml() {
+    if (AS_APP) return '<div class="applive">✓ 홈 화면 앱으로 보고 있어요. 카카오톡과 따로 열려 있어서 편하게 오가며 볼 수 있어요.</div>';
+    var ext = IN_KAKAO ? '<button type="button" class="ext" data-ext>' + (appOs === "iphone" ? "Safari로 열기" : "인터넷 앱으로 열기") + " ↗</button>" : "";
+    var ios = '<ol class="steps">' +
+      '<li class="pre"><span><b>카카오톡에서 열었다면 먼저 Safari로 열어 주세요.</b><span class="sub">카카오톡 화면 아래쪽 <span class="key">⋯</span> 또는 공유 <span class="key">⇧</span> 버튼 → \'Safari로 열기\'. 카카오톡 안에서는 홈 화면에 추가할 수 없어요.</span>' + ext + "</span></li>" +
+      '<li><span>Safari 아래쪽 <span class="key">⋯</span> 버튼을 누르고 <b>공유</b> <span class="key">⇧</span>를 눌러요.<span class="sub">주소창 옆에 공유 <span class="key">⇧</span> 버튼이 바로 보이면 그걸 눌러도 돼요.</span></span></li>' +
+      '<li><span>목록을 위로 밀어 <b>홈 화면에 추가</b>를 눌러요.<span class="sub">안 보이면 맨 아래 \'더 보기\' 또는 \'작업 편집\'에서 찾을 수 있어요.</span></span></li>' +
+      '<li><span><b>웹 앱으로 열기</b>가 켜져 있는지 확인하고, 오른쪽 위 <b>추가</b>를 눌러요.</span></li>' +
+      '<li><span>홈 화면에 생긴 <b>김장대첩</b> 아이콘을 누르면 앱처럼 열려요.</span></li></ol>';
+    var gal = '<ol class="steps">' +
+      '<li class="pre"><span><b>카카오톡에서 열었다면 먼저 인터넷 앱으로 열어 주세요.</b><span class="sub">카카오톡 화면 구석의 <span class="key">⋮</span> 버튼 → \'다른 브라우저로 열기\'. 카카오톡 안에서는 홈 화면에 추가할 수 없어요.</span>' + ext + "</span></li>" +
+      '<li><span>쓰는 인터넷 앱에 맞춰 메뉴를 열어요.<div class="br2">' +
+        '<div><span class="lb">삼성 인터넷</span>아래쪽 <span class="key">≡</span> 메뉴 → <b>현재 페이지 추가</b> → <b>홈 화면</b> 선택</div>' +
+        '<div><span class="lb">크롬</span>오른쪽 위 <span class="key">⋮</span> 메뉴 → <b>홈 화면에 추가</b> (또는 \'앱 설치\')</div></div></span></li>' +
+      '<li><span><b>추가</b>(또는 <b>설치</b>)를 눌러요.<span class="sub">\'홈 화면에 추가할까요?\'가 한 번 더 나오면 \'추가\'를 눌러 주세요.</span></span></li>' +
+      '<li><span>홈 화면에 생긴 <b>김장대첩</b> 아이콘을 누르면 앱처럼 열려요.<span class="sub">아이콘이 안 보이면 홈 화면 맨 끝 페이지를 확인해 주세요.</span></span></li></ol>';
+    return '<details class="appnote" id="appnote"' + (appOpen ? " open" : "") + '><summary><span class="tag">중요</span>📲 홈 화면에 앱으로 추가하기<span class="fold"></span></summary>' +
+      '<p class="why">카카오톡에서 링크를 열면 이 페이지를 보는 동안 카톡을 쓸 수 없어요. 홈 화면에 한 번 추가해 두면 <b>앱처럼 따로 열려서</b> 카톡과 편하게 오갈 수 있어요.</p>' +
+      '<div class="os" role="group" aria-label="휴대폰 종류"><button type="button" data-os="iphone" aria-pressed="' + (appOs === "iphone") + '">아이폰</button><button type="button" data-os="galaxy" aria-pressed="' + (appOs === "galaxy") + '">갤럭시</button></div>' +
+      (appOs === "iphone" ? ios : gal) +
+      '<p class="done">한 번만 해 두면 행사 내내 아이콘으로 바로 열 수 있어요. 내용은 열 때마다 최신으로 바뀌어요.</p></details>';
+  }
+  function openExternal() {
+    var url = location.href.split("#")[0];
+    location.href = "kakaotalk://web/openExternal?url=" + encodeURIComponent(url);
+  }
+
   /* ── 공지 ── */
   function viewNotice() {
-    var h = '<h2 class="sec-h">운영 공지</h2>';
+    var h = appNoteHtml() + '<h2 class="sec-h">운영 공지</h2>';
     h += D.notes.length ? '<div class="notes">' + D.notes.map(function (n) {
       return '<article class="note' + (n.pin ? " pin" : "") + '"><h3>' + (n.pin ? '<span class="tag">중요</span>' : "") + esc(n.title) +
         (n.date ? '<span class="d">' + esc(n.date) + "</span>" : "") + "</h3><p>" + esc(n.body) + "</p></article>";
@@ -536,11 +607,18 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
   });
   $("view").addEventListener("click", function (e) {
     var o = e.target.closest("[data-open]"); if (o) { openDetail(o.dataset.open); return; }
+    var os = e.target.closest("[data-os]"); if (os) { appOs = os.dataset.os; render(); return; }
+    if (e.target.closest("[data-ext]")) { openExternal(); return; }
     var n = e.target.closest("[data-who]");
     if (n) { who = n.dataset.who; try { localStorage.setItem("kj-admin-who", who); } catch (x) {} render(); return; }
     var f = e.target.closest("[data-sf]"); if (f) { supFilter = f.dataset.sf; render(); }
   });
   $("view").addEventListener("change", function (e) { if (e.target.id === "others") { showOthers = e.target.checked; render(); } });
+  /* 안내를 접거나 펼친 상태를 기억 (1분마다 화면을 새로 그려도 유지) */
+  $("view").addEventListener("toggle", function (e) {
+    if (e.target.id !== "appnote") return;
+    appOpen = e.target.open; try { localStorage.setItem("kj-appnote-closed", appOpen ? "0" : "1"); } catch (x) {}
+  }, true);
 
   function startView() {
     var h = location.hash.slice(1);
