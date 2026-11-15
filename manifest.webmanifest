@@ -1,0 +1,16 @@
+{
+  "name": "김장대첩 운영진 보드",
+  "short_name": "김장대첩",
+  "description": "BACKPACK STAY 김장대첩 운영진 일정 · 할 일 · 준비물 · 지도",
+  "lang": "ko",
+  "start_url": "./index_admin.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FFFAEC",
+  "theme_color": "#1B1B1B",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
