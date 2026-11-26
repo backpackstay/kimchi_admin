@@ -43,6 +43,20 @@ button{font:inherit;color:inherit}
 .eyebrow{font:600 11.5px var(--mono);letter-spacing:.08em;color:#FF8A57;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .staff-badge{font:700 11px var(--body);letter-spacing:0;background:#FF5F18;color:#fff;border-radius:5px;padding:1px 7px}
 h1{font:400 clamp(26px,7vw,38px)/1.1 var(--display);margin:6px 0 12px;letter-spacing:-.01em;word-break:keep-all}
+.crew{margin:12px 0 14px;border:1px solid #3A3631;border-radius:12px;background:#23211E}
+.crew>summary{list-style:none;cursor:pointer;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;padding:10px 14px;font-weight:700;color:#FFFAEC}
+.crew>summary::-webkit-details-marker{display:none}
+.crew>summary::before{content:"▸";color:#FF8A57;font-size:12px}
+.crew[open]>summary::before{content:"▾"}
+.crew>summary .muted-d{color:#B8B0A2;font-weight:400;font-size:12.5px}
+.crew-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:10px;padding:0 14px 12px}
+.crew-team{min-width:0}
+.crew-team h3{margin:0 0 4px;font:600 11.5px var(--mono);letter-spacing:.06em;color:#FF8A57}
+.crew-team ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.crew-team li{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:13px;color:#FFFAEC;border-bottom:1px dashed #3A3631;padding-block:3px}
+.crew-team li:last-child{border-bottom:0}
+.crew-team .ph{font-family:var(--mono);font-variant-numeric:tabular-nums;color:#D9D2C3;white-space:nowrap;text-decoration:none}
+.crew-team .ph.none{color:#8C8478;font-family:var(--body);font-size:12px}
 .facts{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:5px 12px;margin:0;padding:0;list-style:none;font-size:14px}
 .facts li{display:contents}
 .facts b{color:#FF8A57;font-weight:500;white-space:nowrap}
@@ -240,6 +254,18 @@ dialog::backdrop{background:rgba(0,0,0,.45)}
   <div class="wrap">
     <div class="eyebrow"><span id="sub"></span><span class="staff-badge">운영진 전용</span></div>
     <h1 id="name">김장대첩 운영진 보드</h1>
+    <!-- 운영진 비상연락망: 운영보드(김장대첩 운영보드) 연락망과 같은 내용. 바뀌면 이 목록을 고쳐 주세요. -->
+    <details class="crew" open>
+      <summary>운영진 비상연락망 <span class="muted-d">22명 · 번호를 누르면 바로 전화</span></summary>
+      <div class="crew-grid">
+      <div class="crew-team"><h3>총괄</h3><ul><li><span>송슬기</span><a class="ph" href="tel:01022245292">010-2224-5292</a></li><li><span>서선아</span><a class="ph" href="tel:01053072221">010-5307-2221</a></li></ul></div>
+      <div class="crew-team"><h3>한웅팀</h3><ul><li><span>박한웅</span><a class="ph" href="tel:01054754679">010-5475-4679</a></li><li><span>민중원</span><a class="ph" href="tel:01033864165">010-3386-4165</a></li><li><span>김가람</span><a class="ph" href="tel:01051373277">010-5137-3277</a></li><li><span>이미정</span><span class="ph none">번호 미등록</span></li></ul></div>
+      <div class="crew-team"><h3>민수팀</h3><ul><li><span>고민수</span><a class="ph" href="tel:01076545581">010-7654-5581</a></li><li><span>우상민</span><a class="ph" href="tel:01022945864">010-2294-5864</a></li><li><span>정유진</span><a class="ph" href="tel:01054192207">010-5419-2207</a></li></ul></div>
+      <div class="crew-team"><h3>혜인팀</h3><ul><li><span>이혜인</span><a class="ph" href="tel:01087680723">010-8768-0723</a></li><li><span>박용선</span><a class="ph" href="tel:01066600707">010-6660-0707</a></li><li><span>주두리 (로사 · 셔틀 인솔)</span><a class="ph" href="tel:01028720170">010-2872-0170</a></li></ul></div>
+      <div class="crew-team"><h3>포토팀</h3><ul><li><span>유창현</span><a class="ph" href="tel:01076641536">010-7664-1536</a></li><li><span>심호재</span><a class="ph" href="tel:01050237644">010-5023-7644</a></li><li><span>김상현</span><a class="ph" href="tel:01093323011">010-9332-3011</a></li><li><span>전용국</span><a class="ph" href="tel:01057979555">010-5797-9555</a></li></ul></div>
+      <div class="crew-team"><h3>산타지팀</h3><ul><li><span>조아영</span><a class="ph" href="tel:01034378626">010-3437-8626</a></li><li><span>손정민</span><a class="ph" href="tel:01062269149">010-6226-9149</a></li><li><span>김신형</span><a class="ph" href="tel:01038802855">010-3880-2855</a></li><li><span>슬기</span><span class="ph none">번호 미등록</span></li><li><span>영현</span><span class="ph none">번호 미등록</span></li><li><span>유진</span><a class="ph" href="tel:01095766530">010-9576-6530</a></li></ul></div>
+      </div>
+    </details>
     <ul class="facts" id="facts"></ul>
   </div>
 </header>
